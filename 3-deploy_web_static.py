@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os.path
-from datetime import datetime, date
+from time import strftime
+from datetime import date
 from fabric.api import *
 
 env.hosts = ['52.3.253.194', '34.207.154.42']
