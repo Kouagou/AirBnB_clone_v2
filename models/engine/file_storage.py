@@ -21,7 +21,7 @@ class FileStorage:
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls:
-            if type(cls) == str:
+            if type(cls) is str:
                 cls = classes[cls]
 
             class_name = cls.__name__

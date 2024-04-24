@@ -45,7 +45,7 @@ class TestHBNBCommand(unittest.TestCase):
         except IOError:
             pass
         del cls.HBNB
-        if type(models.storage) == DBStorage:
+        if type(models.storage) is DBStorage:
             models.storage._DBStorage__session.close()
 
     def setUp(self):
@@ -95,7 +95,7 @@ class TestHBNBCommand(unittest.TestCase):
 #        with patch("sys.stdout", new=StringIO()) as f:
 #            self.assertTrue(self.HBNB.onecmd("EOF"))
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBStorage")
+    @unittest.skipIf(type(models.storage) is DBStorage, "Testing DBStorage")
     def test_create(self):
         """Test create command."""
         with patch("sys.stdout", new=StringIO()) as f:
@@ -179,7 +179,7 @@ class TestHBNBCommand(unittest.TestCase):
             self.assertEqual(
                 "** no instance found **\n", f.getvalue())
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBStorage")
+    @unittest.skipIf(type(models.storage) is DBStorage, "Testing DBStorage")
     def test_all(self):
         """Test all command input."""
         with patch('sys.stdout', new=StringIO()) as f:
@@ -189,7 +189,7 @@ class TestHBNBCommand(unittest.TestCase):
             self.HBNB.onecmd("all Review")
             self.assertEqual("\n", f.getvalue())
 
-    @unittest.skipIf(type(models.storage) == DBStorage, "Testing DBStorage")
+    @unittest.skipIf(type(models.storage) is DBStorage, "Testing DBStorage")
     def test_update(self):
         """Test update command input."""
         with patch("sys.stdout", new=StringIO()) as f:

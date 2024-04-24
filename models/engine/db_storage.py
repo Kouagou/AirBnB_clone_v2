@@ -43,7 +43,7 @@ class DBStorage:
         """Returns a dictionary of models currently in storage"""
         new_dict = {}
         if cls:
-            if type(cls) == str:
+            if type(cls) is str:
                 cls = classes[cls]
 
             objs = self.__session.query(cls).all()
