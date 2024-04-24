@@ -1,56 +1,16 @@
 #!/usr/bin/python3
-""" Test the City Class """
+"""
+Contains the TestCityDocs classes
+"""
+
+from datetime import datetime
+import inspect
+import models
+from models import city
+from models.base_model import BaseModel
 import pep8
 import unittest
-import inspect
-from tests.test_models.test_base_model import test_basemodel
-from models.city import City
-from models import city
-
-
-class test_City(test_basemodel):
-    """ Test for class City """
-
-    def __init__(self, *args, **kwargs):
-        """ Initialize the class and set up relevant resources """
-        super().__init__(*args, **kwargs)
-        self.name = "City"
-        self.value = City
-
-    def test_state_id(self):
-        """ Test state_id attribute to be an empty string """
-        new = self.value()
-        self.assertTrue(hasattr(new, "state_id"))
-        self.assertEqual(new.state_id, None)
-
-    def test_name(self):
-        """ Test name attribute to be an empty string"""
-        new = self.value()
-        self.assertTrue(hasattr(new, "name"))
-        self.assertEqual(new.name, None)
-
-    def test_to_dict(self):
-        """Tests that the to_dict method returns a dictionary"""
-        city_dict = self.value().to_dict()
-        self.assertEqual(type(city_dict), dict)
-
-    def test_to_dict_assert_values(self):
-        """Test that the values in to_dict() are correct"""
-        city = self.value()
-        city_dict = city.to_dict()
-        self.assertNotIn("_sa_instance_state", city_dict.keys())
-        self.assertEqual(city_dict["__class__"], "City")
-        t_format = "%Y-%m-%dT%H:%M:%S.%f"
-        self.assertEqual(city_dict["created_at"],
-                         city.created_at.strftime(t_format))
-        self.assertEqual(city_dict["updated_at"],
-                         city.updated_at.strftime(t_format))
-
-    def test_str(self):
-        """Test that the str method has the correct output"""
-        city = self.value()
-        string = "[City] ({}) {}".format(city.id, city.to_dict())
-        self.assertEqual(string, str(city))
+City = city.City
 
 
 class TestCityDocs(unittest.TestCase):
@@ -95,3 +55,60 @@ class TestCityDocs(unittest.TestCase):
                              "{:s} method needs a docstring".format(func[0]))
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
+
+
+class TestCity(unittest.TestCase):
+    """Test the City class"""
+    def test_is_subclass(self):
+        """Test that City is a subclass of BaseModel"""
+        city = City()
+        self.assertIsInstance(city, BaseModel)
+        self.assertTrue(hasattr(city, "id"))
+        self.assertTrue(hasattr(city, "created_at"))
+        self.assertTrue(hasattr(city, "updated_at"))
+
+    def test_name_attr(self):
+        """Test that City has attribute name, and it's an empty string"""
+        city = City()
+        self.assertTrue(hasattr(city, "name"))
+        if models.storage_t == 'db':
+            self.assertEqual(city.name, None)
+        else:
+            self.assertEqual(city.name, "")
+
+    def test_state_id_attr(self):
+        """Test that City has attribute state_id, and it's an empty string"""
+        city = City()
+        self.assertTrue(hasattr(city, "state_id"))
+        if models.storage_t == 'db':
+            self.assertEqual(city.state_id, None)
+        else:
+            self.assertEqual(city.state_id, "")
+
+    def test_to_dict_creates_dict(self):
+        """test to_dict method creates a dictionary with proper attrs"""
+        c = City()
+        new_d = c.to_dict()
+        self.assertEqual(type(new_d), dict)
+        self.assertFalse("_sa_instance_state" in new_d)
+        for attr in c.__dict__:
+            if attr is not "_sa_instance_state":
+                self.assertTrue(attr in new_d)
+        self.assertTrue("__class__" in new_d)
+
+    def test_to_dict_values(self):
+        """test that values in dict returned from to_dict are correct"""
+        t_format = "%Y-%m-%dT%H:%M:%S.%f"
+        c = City()
+        new_d = c.to_dict()
+        self.assertEqual(new_d["__class__"], "City")
+        self.assertEqual(type(new_d["created_at"]), str)
+        self.assertEqual(type(new_d["updated_at"]), str)
+        self.assertEqual(new_d["created_at"], c.created_at.strftime(t_format))
+        self.assertEqual(new_d["updated_at"], c.updated_at.strftime(t_format))
+
+    def test_str(self):
+        """test that the str method has the correct output"""
+        city = City()
+        string = "[City] ({}) {}".format(city.id, city.__dict__)
+        self.assertEqual(string, str(city))

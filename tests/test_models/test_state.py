@@ -1,27 +1,16 @@
 #!/usr/bin/python3
-""" Contains tests for class State """
-from tests.test_models.test_base_model import test_basemodel
-from models.state import State
-from models import state
+"""
+Contains the TestStateDocs classes
+"""
+
+from datetime import datetime
 import inspect
+import models
+from models import state
+from models.base_model import BaseModel
 import pep8
 import unittest
-
-
-class test_state(test_basemodel):
-    """ Tests for class State """
-
-    def __init__(self, *args, **kwargs):
-        """ Initialize class test_state and set up resources """
-        super().__init__(*args, **kwargs)
-        self.name = "State"
-        self.value = State
-
-    def test_name(self):
-        """ Test attribute name is empty"""
-        new = self.value()
-        self.assertTrue(hasattr(new, "name"))
-        self.assertEqual(new.name, None)
+State = state.State
 
 
 class TestStateDocs(unittest.TestCase):
@@ -66,3 +55,51 @@ class TestStateDocs(unittest.TestCase):
                              "{:s} method needs a docstring".format(func[0]))
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
+
+
+class TestState(unittest.TestCase):
+    """Test the State class"""
+    def test_is_subclass(self):
+        """Test that State is a subclass of BaseModel"""
+        state = State()
+        self.assertIsInstance(state, BaseModel)
+        self.assertTrue(hasattr(state, "id"))
+        self.assertTrue(hasattr(state, "created_at"))
+        self.assertTrue(hasattr(state, "updated_at"))
+
+    def test_name_attr(self):
+        """Test that State has attribute name, and it's as an empty string"""
+        state = State()
+        self.assertTrue(hasattr(state, "name"))
+        if models.storage_t == 'db':
+            self.assertEqual(state.name, None)
+        else:
+            self.assertEqual(state.name, "")
+
+    def test_to_dict_creates_dict(self):
+        """test to_dict method creates a dictionary with proper attrs"""
+        s = State()
+        new_d = s.to_dict()
+        self.assertEqual(type(new_d), dict)
+        self.assertFalse("_sa_instance_state" in new_d)
+        for attr in s.__dict__:
+            if attr is not "_sa_instance_state":
+                self.assertTrue(attr in new_d)
+        self.assertTrue("__class__" in new_d)
+
+    def test_to_dict_values(self):
+        """test that values in dict returned from to_dict are correct"""
+        t_format = "%Y-%m-%dT%H:%M:%S.%f"
+        s = State()
+        new_d = s.to_dict()
+        self.assertEqual(new_d["__class__"], "State")
+        self.assertEqual(type(new_d["created_at"]), str)
+        self.assertEqual(type(new_d["updated_at"]), str)
+        self.assertEqual(new_d["created_at"], s.created_at.strftime(t_format))
+        self.assertEqual(new_d["updated_at"], s.updated_at.strftime(t_format))
+
+    def test_str(self):
+        """test that the str method has the correct output"""
+        state = State()
+        string = "[State] ({}) {}".format(state.id, state.__dict__)
+        self.assertEqual(string, str(state))
