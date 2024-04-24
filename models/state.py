@@ -17,12 +17,12 @@ class State(BaseModel, Base):
         cities = relationship("City",
                               backref="state",
                               cascade="all, delete, delete-orphan")
-    """else:
+    else:
         @property
-        def cities(self): """
+        def cities(self):
             """Return the list of City instances corresponding to this state"""
-            """ from models import storage
+            from models import storage
             my_cities = storage.all(City)
             state_city = [cc for cc in my_cities.values()
                           if cc.state_id == self.id]
-            return state_city """
+            return state_city
