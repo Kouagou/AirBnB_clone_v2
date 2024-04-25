@@ -14,6 +14,7 @@ def get_states_list():
     states = sorted(list(storage.all("State").values()), key=lambda x: x.name)
     return render_template('7-states_list.html', states=states)
 
+
 @app.teardown_appcontext
 def close_resources(exception):
     """ A method to handle some stuff. """
